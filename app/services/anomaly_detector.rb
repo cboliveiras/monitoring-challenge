@@ -1,51 +1,36 @@
 class AnomalyDetector
-  ZSCORE_THRESHOLD = 3.0
+  def self.detect_anomaly(time, data)
+    total_transactions = Transaction.where(time:).pluck(:count).sum.to_f
 
-  def self.detect_anomaly(transaction)
-    return [] unless transaction
+    threshold = {
+      'failed' => 5.0,
+      'reversed' => 4.0,
+      'denied' => 3.0
+    }
 
-    status = transaction['status']
-    count = transaction['count'].to_i
-    time = transaction['time']
+    data.each do |status, count|
+      next unless %w[failed reversed denied].include?(status)
 
-    zscore = calculate_zscore(count, time)
-    anomaly_threshold = calculate_anomaly_threshold(time)
+      ratio = ((count.to_f / total_transactions) * 100).round(2)
 
-    if zscore.abs > ZSCORE_THRESHOLD
-      message = "Anomaly detected! #{status.capitalize} transaction has a high Z-score: #{zscore}."
-
-      Alert.create!(time:, status:, message:)
-    elsif transaction.count > anomaly_threshold
-      message = "Anomaly detected! #{status.capitalize} transactions are #{transaction.count}, " \
-      "which exceeds the expected threshold of #{anomaly_threshold}."
-
-      Alert.create!(time:, status:, message:)
-    else
-      return 'Anomaly not detected.'
+      if ratio > threshold[status]
+        alert_message = "Anomaly detected! #{status.capitalize} transactions are #{ratio}%, which exceeds a #{threshold[status]}% ratio."
+        send_email(alert_message)
+        create_alert(time, status, alert_message)
+      end
     end
 
-    Alert.where(time:, status:)
+    Alert.where(time: time) || []
   end
 
   private
 
-  def self.calculate_anomaly_threshold(time)
-    average_count = transaction_counts(time).sum / transaction_statuses_size(time)
-    average_count
+  def self.send_email(message)
+    AlertMailer.send_alert(message).deliver_now
   end
 
-  def self.calculate_zscore(count, time)
-    mean = transaction_counts(time).sum / transaction_counts(time).size.to_f
-    std_dev = Math.sqrt(transaction_counts(time).map { |x| (x - mean) ** 2 }.sum / transaction_statuses_size(time))
-
-    (count - mean) / std_dev
-  end
-
-  def self.transaction_counts(time)
-    Transaction.where(time: time).pluck(:count)
-  end
-
-  def self.transaction_statuses_size(time)
-    Transaction.where(time: time).pluck(:status).uniq.size
+  def self.create_alert(time, status, message)
+    Alert.create!(time: time, status: status, message: message)
   end
 end
+
