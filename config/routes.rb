@@ -3,4 +3,14 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "articles#index"
+
+  get '/transaction_data', to: 'transactions#transaction_data'
+  post '/new_transaction', to: 'transactions#new_transaction'
+
+  resources :transactions, only: [] do
+    collection do
+      post :monitoring
+      get :monitoring
+    end
+  end
 end
