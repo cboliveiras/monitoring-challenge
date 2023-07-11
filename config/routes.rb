@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
 
-  get '/transaction_data', to: 'transactions#transaction_data'
+  get '/alerts', to: 'transactions#alerts'
   post '/new_transaction', to: 'transactions#new_transaction'
 
   resources :transactions, only: [] do
