@@ -1,5 +1,7 @@
 class AlertMailer < ApplicationMailer
-  def send_alert(message)
-    mail(to: 'cboliveirasbr@gmail.com', subject: 'Anomaly Detection Alert', body: message)
+  def send_alert(alerts)
+    monitoring_team = ['email1@example.com', 'email2@example.com']
+
+    mail(to: monitoring_team, subject: 'Anomaly Detection Alerts', body: alerts)
   end
 end
