@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alert Monitoring</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="chart"></div>
+
+    <script>
+        function fetchAndPlotAlerts() {
+            // Make an AJAX request to fetch the alerts from the endpoint
+            fetch('/alerts')
+                .then(response => response.json())
+                .then(data => {
+                    // Process the response data and plot the graph
+                    const times = data.map(alert => alert.time);
+                    const denied = data.map(alert => alert.denied);
+                    const reversed = data.map(alert => alert.reversed);
+                    const failed = data.map(alert => alert.failed);
+
+                    console.log(data)
+
+                    console.log(times)
+
+                    // Create a bar chart using Plotly
+                    const layout = {
+                        title: 'Alerts by Time',
+                        xaxis: { title: 'Time' },
+                        yaxis: { title: 'Number of Alerts' }
+                    };
+
+                    const trace1 = {
+                        x: times,
+                        y: denied,
+                        type: 'bar'
+                    };
+
+                    const trace2 = {
+                        x: times,
+                        y: reversed,
+                        type: 'bar'
+                    };
+
+                    const trace3 = {
+                        x: times,
+                        y: failed,
+                        type: 'bar'
+                    };
+
+                    const plotData = [trace1, trace2, trace3];
+
+                    Plotly.newPlot('chart', plotData, layout);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Initial fetch and plot
+        fetchAndPlotAlerts();
+
+        // Fetch and plot every 1 minute
+        setInterval(fetchAndPlotAlerts, 1 * 60 * 1000);
+    </script>
+</body>
+</html>

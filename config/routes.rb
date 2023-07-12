@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   # root "articles#index"
 
   get '/alerts', to: 'transactions#alerts'
+  get '/alert_monitoring', to: 'transactions#alert_monitoring'
   post '/new_transaction', to: 'transactions#new_transaction'
 
   resources :transactions, only: [] do
