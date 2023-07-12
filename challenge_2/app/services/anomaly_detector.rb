@@ -15,7 +15,7 @@ class AnomalyDetector
       ratio = ((count.to_f / total_transactions) * 100).round(2)
 
       if ratio > threshold[status]
-        alert_message = "Anomaly detected! #{status.capitalize} transactions are #{ratio}%, which exceeds a #{threshold[status]}% ratio."
+        alert_message = "Anomaly detected! #{status.capitalize} transactions at #{time} are #{ratio}%, which exceeds a #{threshold[status]}% ratio."
         alerts << alert_message
         create_alert(time, status, alert_message)
       end
