@@ -4,8 +4,8 @@ class AnomalyDetector
     total_transactions = Transaction.where(time:).pluck(:count).sum.to_f
 
     threshold = {
-      'failed' => 4.0,
-      'reversed' => 5.0,
+      'failed' => 6.0,
+      'reversed' => 6.0,
       'denied' => 6.0
     }
 

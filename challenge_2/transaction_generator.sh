@@ -5,11 +5,11 @@ while [ $hour -lt 24 ]; do
   while [ $minute -lt 60 ]; do
     time=$(printf "%02dh%02d" "$hour" "$minute")
     approved=$((RANDOM % 10))
-    denied=$((RANDOM % 10 + 1))
+    denied=$((RANDOM % 8 + 1))
     refunded=$((RANDOM % 10))
-    reversed=$((RANDOM % 10 + 1))
+    reversed=$((RANDOM % 8 + 1))
     backend_reversed=$((RANDOM % 10))
-    failed=$((RANDOM % 10 + 1))
+    failed=$((RANDOM % 8 + 1))
     processing=$((RANDOM % 8))
 
     # Construct the JSON payload
