@@ -3,63 +3,81 @@
 <head>
     <title>Alert Monitoring</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+      body {
+          margin: 0;
+          padding: 0;
+      }
+      #chart {
+          width: 100vw;
+          height: 100vh;
+      }
+  </style>
 </head>
 <body>
     <div id="chart"></div>
 
     <script>
-        function fetchAndPlotAlerts() {
-            // Make an AJAX request to fetch the alerts from the endpoint
-            fetch('/alerts')
-                .then(response => response.json())
-                .then(data => {
-                    // Process the response data and plot the graph
-                    const times = data.map(alert => alert.time);
-                    const denied = data.map(alert => alert.denied);
-                    const reversed = data.map(alert => alert.reversed);
-                    const failed = data.map(alert => alert.failed);
+      function fetchAndPlotAlerts() {
+        // Making an AJAX request to fetch the alerts from the endpoint
+        fetch('/alerts')
+          .then(response => response.json())
+          .then(data => {
+            // Process the response data and plot the graph
+            const times = data.map(alert => alert.time);
+            const denied = data.map(alert => alert.denied);
+            const reversed = data.map(alert => alert.reversed);
+            const failed = data.map(alert => alert.failed);
 
-                    console.log(data)
+            // Creating a bar chart using Plotly
+            const layout = {
+                title: 'Alerts by Time',
+                xaxis: { title: 'Time' },
+                yaxis: { title: 'Number of Alerts' }
+            };
 
-                    console.log(times)
+            const trace1 = {
+                x: times,
+                y: denied,
+                name: 'Denied Alerts',
+                type: 'bar',
+                text: denied.map(String), // Use the number of alerts as text
+                textposition: 'auto', // Position the text automatically
+                marker: { color: 'CC0000' } // Customize the bar color
+            };
 
-                    // Create a bar chart using Plotly
-                    const layout = {
-                        title: 'Alerts by Time',
-                        xaxis: { title: 'Time' },
-                        yaxis: { title: 'Number of Alerts' }
-                    };
+            const trace2 = {
+                x: times,
+                y: failed,
+                name: 'Failed Alerts',
+                type: 'bar',
+                text: failed.map(String), // Use the number of alerts as text
+                textposition: 'auto', // Position the text automatically
+                marker: { color: 'FFB266' } // Customize the bar color
+            };
 
-                    const trace1 = {
-                        x: times,
-                        y: denied,
-                        type: 'bar'
-                    };
+            const trace3 = {
+                x: times,
+                y: reversed,
+                name: 'Reversed Alerts',
+                type: 'bar',
+                text: reversed.map(String), // Use the number of alerts as text
+                textposition: 'auto', // Position the text automatically
+                marker: { color: 'C0C0C0' } // Customize the bar color
+            };
 
-                    const trace2 = {
-                        x: times,
-                        y: reversed,
-                        type: 'bar'
-                    };
+            const plotData = [trace1, trace2, trace3];
 
-                    const trace3 = {
-                        x: times,
-                        y: failed,
-                        type: 'bar'
-                    };
+            Plotly.newPlot('chart', plotData, layout, { responsive: true });
+          })
+            .catch(error => console.error('Error:', error));
+      }
 
-                    const plotData = [trace1, trace2, trace3];
+      // Initial fetch and plot
+      fetchAndPlotAlerts();
 
-                    Plotly.newPlot('chart', plotData, layout);
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        // Initial fetch and plot
-        fetchAndPlotAlerts();
-
-        // Fetch and plot every 1 minute
-        setInterval(fetchAndPlotAlerts, 1 * 60 * 1000);
+      // Fetch and plot every 1o seconds
+      setInterval(fetchAndPlotAlerts, 10 * 1000);
     </script>
 </body>
 </html>
