@@ -14,17 +14,17 @@ class TransactionsController < ApplicationController
     time = params[:time]
     data = params[:data]
 
+    alerts = AnomalyDetector.detect_anomaly(time, data)
+
     data.each do |status, count|
       transaction = TransactionSumService.sum_transactions_and_update(time, status)
 
       if transaction.present?
         transaction.update(count: transaction.count + count)
       else
-        Transaction.create!(time: time, status: status, count: count)
+        Transaction.create!(time:, status:, count:)
       end
     end
-
-    alerts = AnomalyDetector.detect_anomaly(time, data)
 
     render json: { time:, alerts: alerts.pluck(:message) }, status: :ok
   end
