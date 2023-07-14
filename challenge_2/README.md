@@ -81,7 +81,7 @@ Or just comment lines 4-9.
 8. The Monitoring Challenge should now be accessible at [http://localhost:3000](http://localhost:3000)
 
 
-## Insert data to Database
+## Insert data (given CSVs) to Database
 
 To insert transactions_1.csv and transactions_2.csv files to our database, run the following commands:
 
@@ -99,22 +99,23 @@ rails runner -e development "TransactionDataLoader.load_transactions(Rails.root.
 
 Done. Now we have all data in our database.
 
-## Run the script
-
-To execute the script, run it in a Bash shell (oh my zsh does not work properly) or inside a docker-container. This script will make calls to the new_transaction endpoint, which inserts randomly generated data for testing the Anomaly Detector service.
-
-Considering you are already at the project directory (monitoring-challenge/challenge_2), run:
-
-```./transaction_generator.sh```
-
-It will take about 4 min to run. At the same time, you can follow the alerts at [http://localhost:3000/alert_monitoring](http://localhost:3000/alert_monitoring).
-
-## Postman Collection
+## Use Postman to insert data per minute
 
 To test the endpoints, you can use [Postman](https://cboliveiras.postman.co/workspace/New-Team-Workspace~1b824ad1-9e36-4ad8-a727-9110ae009b69/collection/18541010-862099a5-053e-4554-a021-a20090debd85?action=share&creator=18541010). Alternatively, you can access them directly at
 - [http://localhost:3000/alerts](http://localhost:3000/alerts) or
 - [http://localhost:3000/alert_monitoring](http://localhost:3000/alert_monitoring).
 
 On the last one you will find a graph displaying the number of alerts over time, which is automatically refreshed every 10 seconds.
+
+
+## Run the script to insert data to all times (optional) 
+
+To execute the script, run it in a Bash shell (oh my zsh does not work properly) or inside a docker container. This script will make calls to the new_transaction endpoint, which inserts randomly generated data for testing the Anomaly Detector service.
+
+Considering you are already at the project directory (monitoring-challenge/challenge_2), run:
+
+```./transaction_generator.sh```
+
+It will take about 4 min to run. At the same time, you can follow the alerts at [http://localhost:3000/alert_monitoring](http://localhost:3000/alert_monitoring).
 
 ### It's up to you to decide whether you want to test the application by running the script or by manually entering data through the endpoint. However, it is more consistent if you enter data individually through the endpoint new_transaction on Postman, as the script enters random values :)
